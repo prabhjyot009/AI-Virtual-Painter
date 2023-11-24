@@ -9,6 +9,8 @@ import HandTrackingModule as htm
 brushThickness = 15
 eraserThickness = 50
 #######################
+pTime = 0
+cTime = 0
 
 folderPath = "Header"
 myList = os.listdir(folderPath)
@@ -88,11 +90,16 @@ while True:
     imgInv = cv2.cvtColor(imgInv,cv2.COLOR_GRAY2BGR)
     img = cv2.bitwise_and(img,imgInv)
     img = cv2.bitwise_or(img,imgCanvas)
-
+    cTime = time.time()
+    fps = 1 / (cTime - pTime)
+    pTime = cTime
+    cv2.putText(img, str(int(fps)), (100, 700), cv2.FONT_HERSHEY_PLAIN, 3, (0, 165, 255), 3)
     #setting the header image
     img[0: 125, 0: 1280] = header
     #img=cv2.addWeighted(img,0.5,imgCanvas,0.5,0)
     cv2.imshow("Image", img)
-    cv2.imshow("Canvas", imgCanvas)
+    #cv2.imshow("Canvas", imgCanvas)
     #cv2.imshow("Inv", imgInv)
     cv2.waitKey(1)
+
+#fps
