@@ -102,4 +102,3 @@ while True:
     #cv2.imshow("Inv", imgInv)
     cv2.waitKey(1)
 
-#fps
