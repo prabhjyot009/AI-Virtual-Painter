@@ -15,4 +15,4 @@ AI Virtual Painter is a project inspired by [freeCodeCamp.org](https://www.freec
 
 Include a GIF or screenshot to showcase the application in action.
 
-![AI Virtual Painter Demo](visionLAYOUT.gif)
+![AI Virtual Painter Demo](Digit.png)
