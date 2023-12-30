@@ -28,3 +28,27 @@ model.fit(train_images, train_labels, epochs=10, batch_size=64, validation_data=
 
 # Save the model
 model.save('digit_recognition_model.h5')
+
+# Evaluate the model
+test_loss, test_acc = model.evaluate(test_images, test_labels)
+print('Test accuracy:', test_acc)
+
+#Confusion Matrix
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+y_pred = model.predict(test_images)
+y_pred_classes = np.argmax(y_pred,axis = 1)
+y_true = np.argmax(test_labels,axis = 1)
+confusion_mtx = confusion_matrix(y_true, y_pred_classes)
+f,ax = plt.subplots(figsize=(8, 8))
+sns.heatmap(confusion_mtx, annot=True, linewidths=0.01,cmap="Greens",linecolor="gray", fmt= '.1f',ax=ax)
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+plt.title("Confusion Matrix")
+plt.show()
+
+#Classification Report
+from sklearn.metrics import classification_report
+print(classification_report(y_true, y_pred_classes))
