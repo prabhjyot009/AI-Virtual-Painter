@@ -44,41 +44,60 @@ class handDetector():
 
     def fingerUp(self):
         fingers = []
-        if self.PosList[self.tipIds[0]][1] < self.PosList[self.tipIds[0] - 1][1]:
-            fingers.append(1)
-        else:
-            fingers.append(0)
-        for id in range(1, 5):
-
-            if self.PosList[self.tipIds[id]][2] < self.PosList[self.tipIds[id] - 2][2]:
+        if len(self.PosList) >= self.tipIds[0] and len(self.PosList) >= self.tipIds[0] - 1:
+            if self.PosList[self.tipIds[0]][1] < self.PosList[self.tipIds[0] - 1][1]:
                 fingers.append(1)
             else:
                 fingers.append(0)
+
+        for id in range(1, 5):
+            if len(self.PosList) >= self.tipIds[id] and len(self.PosList) >= self.tipIds[id] - 2:
+                if self.PosList[self.tipIds[id]][2] < self.PosList[self.tipIds[id] - 2][2]:
+                    fingers.append(1)
+                else:
+                    fingers.append(0)
+
         return fingers
+    def get_finger_coordinates(self, img):
+        x, y, w, h = 0, 0, 0, 0
+
+        # Find hands and get finger positions
+        img = self.findHands(img)
+        lm_list = self.findPosition(img, draw=False)
+        finger_up = self.fingerUp()
+
+        if len(lm_list) != 0:
+            x1, y1 = lm_list[8][1:]
+            x2, y2 = lm_list[12][1:]
+
+            # Drawing mode - Index finger is up
+            if finger_up[1] and not finger_up[2]:
+                x, y, w, h = x1, y1, abs(x2 - x1), abs(y2 - y1)
+
+        return x, y, w, h
+
+
 
 def main():
     pTime = 0
     cTime = 0
     cap = cv2.VideoCapture(0)
-    detector = handDetector()
-
+    detector = handDetector(detectionCon=0.75)
     while True:
         success, img = cap.read()
+        img = cv2.flip(img, 1)
         img = detector.findHands(img)
-        PosList = detector.findPosition(img)
-
-        if len(PosList) != 0:
-            print(PosList[4])
+        lmList = detector.findPosition(img, draw=False)
+        if len(lmList) != 0:
+            print(lmList)
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
+        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
-        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 3, (255, 0, 255), 3)
-
-        cv2.imshow("Webcam", img)
+        cv2.imshow("Image", img)
         cv2.waitKey(1)
-
 
 if __name__ == "__main__":
     main()
